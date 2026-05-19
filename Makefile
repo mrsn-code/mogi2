@@ -1,3 +1,4 @@
 init:
 	docker-compose up -d --build
 	docker-compose exec php composer install
+	docker-compose exec php cp .env.example .env
