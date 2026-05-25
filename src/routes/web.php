@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RegisteredUserController;
-use App\Http\Requests\EmailVerificationRequest;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+});
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
@@ -32,5 +36,9 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
     session()->forget('unauthenticated_user');
-    return redirect('/mypage/profile');
-})->name('verification.verify');
+    return redirect('/attendance');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::get('/', function() {
+    return view('welcome');
+});

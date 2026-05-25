@@ -1,0 +1,32 @@
+.page__wrapper {
+    margin: 0 auto;
+    margin-top: 100px;
+    width: 50%;
+    text-align: center;
+}
+
+.verify-email__message {
+    font-weight: bold;
+}
+
+.auth__button {
+    margin: 50px 0px;
+    display: inline-block;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background: #d9d9d9;
+    padding: 10px 20px;
+}
+.auth__button a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+}
+.retransmission__button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}

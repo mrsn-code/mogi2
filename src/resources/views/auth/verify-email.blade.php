@@ -1,6 +1,6 @@
 @extends('layouts.default')
 @section('css')
-<link rel="stylesheet" href="{{asset('css/verify-email.css')}}">
+<link rel="stylesheet" href="{{asset('css/verify.css')}}">
 @endsection
 
 @section('content')

@@ -12,21 +12,15 @@
     </form>
     <nav class="header__nav">
         <ul>
-            @if(Auth::check())
+            <li><a href="">勤怠</a></li>
+            <li><a href="">勤怠一覧</a></li>
+            <li><a href="">申請</a></li>
             <li>
                 <form action="/logout" method="post">
                     @csrf
                     <button class="header__logout">ログアウト</button>
                 </form>
             </li>
-            <li><a href="/mypage">マイページ</a></li>
-            @else
-            <li><a href="/login">ログイン</a></li>
-            <li><a href="/register">会員登録</a></li>
-            @endif
-            <a href="/sell">
-                <li class="header__btn">出品</li>
-            </a>
         </ul>
     </nav>
     @endif
