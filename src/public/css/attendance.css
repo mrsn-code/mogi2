@@ -1,0 +1,45 @@
+body {
+    background: #F0EFF2;
+}
+.container {
+    margin-top: 50px;
+    text-align: center;
+}
+.status__wrapper {
+    display: inline-block;
+    margin-bottom: 25px;
+    padding: 10px 20px;
+    background: #C8C8C8;
+    color: #696969;
+    border-radius: 9999px;
+}
+
+.calendar {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.clock {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.attendance__button {
+    display: inline-block;
+    padding: 10px 0;
+    width: 100px;
+    font-weight: bold;
+    background: #000;
+    color: #fff;
+    border-radius: 10px;
+}
+.break__button {
+    display: inline-block;
+    padding: 10px 0px;
+    width: 100px;
+    font-weight: bold;
+    background: #fff;
+    color: #000;
+    border-radius: 10px;
+}

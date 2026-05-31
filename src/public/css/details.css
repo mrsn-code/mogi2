@@ -1,0 +1,24 @@
+body {
+    background: #F0EFF2;
+}
+.attendance-detail-container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+    background: #fff;
+}
+
+.attendance-detail-table {
+    width: 100%;
+}
+.attendance-detail-table th,
+.attendance-detail-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 14px 10px;
+    text-align: left;
+}
+
+.attendance-detail-table th {
+    font-weight: bold;
+    padding-right: 80px;
+}
