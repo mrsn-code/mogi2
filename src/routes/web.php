@@ -1,11 +1,16 @@
 <?php
 
+use App\Http\Controllers\AdminAttendanceController;
+use App\Http\Controllers\AdminLoginController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceRequestController;
 use App\Http\Controllers\RegisteredUserController;
+use App\Http\Controllers\StaffController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
 
 
 /*
@@ -72,4 +77,40 @@ Route::middleware('auth')->group(function () {
     // ユーザー側の申請一覧
     Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'index'])
         ->name('attendance.request.index');
+    Route::get('/stamp_correction_request/{id}', [AttendanceRequestController::class, 'show'])
+        ->name('attendance.request.show');
+
+    Route::post('/stamp_correction_request/{id}/approve', [AttendanceRequestController::class, 'approve'])
+        ->name('attendance.request.approve');
 });
+
+Route::get('/admin/login', [AdminLoginController::class, 'create'])
+    ->middleware('guest')
+    ->name('admin.login');
+
+Route::post('/admin/login', [AdminLoginController::class, 'store'])
+    ->middleware('guest')
+    ->name('admin.login.store');
+
+Route::post('/admin/logout', [AdminLoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('admin.logout');
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])
+            ->name('attendance.list');
+        Route::get('/attendance/details/{id}', [AdminAttendanceController::class, 'details'])
+            ->name('attendance.details');
+        
+        Route::get('/staff/list', [StaffController::class, 'index'])
+            ->name('staff.list');
+        Route::get('/attendance/staff/{id}', [StaffController::class, 'attendanceList'])
+            ->name('attendance.staff');
+
+        Route::get('/attendance/details/{id}', [AdminAttendanceController::class, 'details'])
+            ->name('attendance.details');
+    });
+

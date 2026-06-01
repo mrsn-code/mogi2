@@ -1,25 +1,15 @@
 @extends('layouts.default')
-
-<!-- タイトル -->
-@section('title','申請一覧')
-
-<!-- css読み込み -->
 @section('css')
 <link rel="stylesheet" href="{{ asset('/css/requests.css') }}">
 @endsection
 
-<!-- 本体 -->
+<!-- ヘッダー -->
+@include('components.header_admin')
 @section('content')
-<!-- ヘッダー-->
-@include('components.header')
-
 <div class="request-list-container">
     <div class="title__section">
         <h1>| 申請一覧</h1>
     </div>
-    @if (session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @endif
     <div class="tabs">
         <a href="{{ route('attendance.request.index', ['status' => 'pending']) }}"
            class="{{ $status === 'pending' ? 'active' : '' }}">
@@ -31,7 +21,6 @@
         </a>
     </div>
     <hr class="hline">
-
     <table class="request-table">
         <thead>
             <tr>
@@ -43,28 +32,22 @@
                 <th>詳細</th>
             </tr>
         </thead>
-
         <tbody>
             @foreach ($requests as $requestItem)
                 <tr>
                     <td>{{ $requestItem->status_label }}</td>
-                    <td>
-                        {{ $requestItem->attendance->user->name }}
-                    </td>
+                    <td>{{ $requestItem->user->name }}</td>
                     <td>
                         {{ \Carbon\Carbon::parse($requestItem->attendance->work_date)->format('Y/m/d') }}
                     </td>
-                    <td>
-                        {{ $requestItem->note }}
-                    </td>
+                    <td>{{ $requestItem->note }}</td>
                     <td>
                         {{ $requestItem->created_at->format('Y/m/d H:i') }}
                     </td>
                     <td>
-                        <a href="{{ route('attendance.details', ['id' => $requestItem->attendance_id]) }}">
-                            <span class="detail">詳細</span>
+                        <a href="{{ route('attendance.request.show', ['id' => $requestItem->id]) }}">
+                            詳細
                         </a>
-                        
                     </td>
                 </tr>
             @endforeach
@@ -72,4 +55,3 @@
     </table>
 </div>
 @endsection
-

@@ -10,26 +10,24 @@
 @section('content')
 
 <!-- ヘッダー -->
-@include('components.header')
+@include('components.header_admin')
 <div class="attendance-list-container">
     <div class="title__section">
-        <h1>| 勤怠一覧</h1>
+        <h1>| {{ \Carbon\Carbon::parse($currentDate)->format('Y/m/d') }}の勤怠一覧</h1>
     </div>
     <div class="time-navigation">
-        <a href="{{ route('attendance.list', ['month' => $previousMonth]) }}" class="change-button">
-            前月
+        <a href="{{ route('admin.attendance.list', ['date' => $previousDate]) }}" class="change-button">
+            前日
         </a>
-        <h2>
-            {{ $currentMonth->format('Y/m') }}
-        </h2>
-        <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="change-button">
-            次月
+        <h2>{{ $currentDate->format('Y/m/d') }}</h2>
+        <a href="{{ route('admin.attendance.list', ['date' => $nextDate]) }}" class="change-button">
+            翌日
         </a>
     </div>
     <table class="attendance-table">
         <thead>
             <tr>
-                <th>日付</th>
+                <th>名前</th>
                 <th>出勤</th>
                 <th>退勤</th>
                 <th>休憩</th>
@@ -38,16 +36,12 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($attendanceList as $row)
+            @foreach ($users as $user)
                 @php
-                    $date = $row['date'];
-                    $attendance = $row['attendance'];
+                    $attendance = $user->attendances->first();
                 @endphp
                 <tr>
-                    <td>
-                        {{ $date->format('m/d') }}
-                        {{ ['日', '月', '火', '水', '木', '金', '土'][$date->dayOfWeek] }}
-                    </td>
+                    <td>{{ $user->name }}</td>
                     <td>
                         @if ($attendance && $attendance->clock_in)
                             {{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}
@@ -70,8 +64,8 @@
                     </td>
                     <td>
                         @if ($attendance)
-                            <a href="{{ route('attendance.details', ['id' => $attendance->id]) }}">
-                                <span class="detail">詳細</span>
+                            <a href="{{ route('admin.attendance.details', ['id' => $attendance->id]) }}">
+                                詳細
                             </a>
                         @endif
                     </td>

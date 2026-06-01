@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 <!-- タイトル -->
-@section('title','勤怠詳細画面')
+@section('title','勤怠詳細')
 
 <!-- css読み込み -->
 @section('css')
@@ -12,8 +12,10 @@
 @section('content')
 <!-- ヘッダー-->
 @include('components.header')
-<h1>勤怠詳細</h1>
 <div class="attendance-detail-container">
+    <div class="title__section">
+        <h1>| 勤怠詳細</h1>
+    </div>
     @if (session('success'))
         <p style="color: green;">{{ session('success') }}</p>
     @endif
@@ -69,7 +71,7 @@
             </tr>
         </table>
         <p class="pending-message">
-            承認待ちのため修正はできません
+            *承認待ちのため修正はできません
         </p>
     @else
 
@@ -135,8 +137,10 @@
                 </td>
             </tr>
         </table>
-        <div class="attendance-detail-actions">
-            <button type="submit">修正</button>
+        <div class="details__wrapper">
+            <div class="attendance-detail-actions">
+                <button type="submit">修正</button>
+            </div>
         </div>
     </form>
     @endif

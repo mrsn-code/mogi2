@@ -7,7 +7,16 @@ body {
     text-align: center;
 }
 
-.month-navigation {
+.title__section {
+    text-align: left;
+    padding-top: 80px;
+}
+.title__section h1 {
+    font-size: 32px;
+
+}
+
+.time-navigation {
     background: #fff;
     display: flex;
     justify-content: space-between;
@@ -18,12 +27,12 @@ body {
     border-radius: 5px;
 }
 
-.month-navigation h2 {
+.time-navigation h2 {
     font-size: 24px;
     margin: 0;
 }
 
-.month-button {
+.change-button {
     padding: 8px 16px;
     text-decoration: none;
     color: #333;

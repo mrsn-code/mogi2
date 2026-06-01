@@ -1,15 +1,23 @@
 body {
     background: #F0EFF2;
 }
+
+.title__section {
+    text-align: left;
+    padding: 80px 0 40px 0;
+}
+.title__section h1 {
+    font-size: 32px;
+}
 .attendance-detail-container {
     width: 80%;
     margin: 0 auto;
     text-align: center;
-    background: #fff;
 }
 
 .attendance-detail-table {
     width: 100%;
+    background: #fff;
 }
 .attendance-detail-table th,
 .attendance-detail-table td {
@@ -21,4 +29,43 @@ body {
 .attendance-detail-table th {
     font-weight: bold;
     padding-right: 80px;
+    vertical-align: middle;
+    color: #737373;
+}
+.pending-message {
+    color: #F27677;
+    text-align: right;
+    padding-top: 20px;
+}
+
+.details__wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+.attendance-detail-actions {
+    width: 80px;
+    height: 50px;
+    border-radius: 3px;
+    background: #000;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+.attendance-detail-actions button {
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.attendance-detail-actions__approved {
+    width: 80px;
+    height: 50px;
+    border-radius: 3px;
+    background: #696969;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+.attendance-detail-actions__approved button {
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
 }

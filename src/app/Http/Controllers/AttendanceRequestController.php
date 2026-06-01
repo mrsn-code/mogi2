@@ -83,7 +83,7 @@ class AttendanceRequestController extends Controller
                     }
 
                     BreakCorrection::create([
-                        'attendance_correction_request_id' => $correctionRequest->id,
+                        'attendance_correction_id' => $correctionRequest->id,
                         'break_time_id' => $break->id,
                         'requested_break_start' => !empty($breakData['break_start'])
                             ? Carbon::parse($workDate . ' ' . $breakData['break_start'])
@@ -103,14 +103,70 @@ class AttendanceRequestController extends Controller
 
     public function index(Request $request) {
         $status = $request->input('status', AttendanceCorrection::STATUS_PENDING);
-        $requests = AttendanceCorrection::with([
-                'attendance.user',
-                'breakCorrections',
-            ])
-            ->where('user_id', Auth::id())
+        $query = AttendanceCorrection::with([
+            'user',
+            'attendance',
+            'breakCorrections',
+        ])
             ->where('status', $status)
-            ->latest()
-            ->get();
+            ->latest();
+        if (!Auth::user()->isAdmin()) {
+            $query->where('user_id', Auth::id());
+        }
+        $requests = $query->get();
+        if (Auth::user()->isAdmin()) {
+            return view('admin.requests.index', compact('requests', 'status'));
+        }
         return view('attendance.requests', compact('requests', 'status'));
+    }
+    public function show($id) {
+        $requestItem = AttendanceCorrection::with([
+            'user',
+            'attendance',
+            'breakCorrections.breakTime',
+        ])->findOrFail($id);
+        if (!Auth::user()->isAdmin() && $requestItem->user_id !== Auth::id()) {
+            abort(403);
+        }
+        if (Auth::user()->isAdmin()) {
+            return view('admin.requests.show', compact('requestItem'));
+        }
+        return view('attendance.request_show', compact('requestItem'));
+    }
+
+    public function approve($id) {
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+        $requestItem = AttendanceCorrection::with([
+                'attendance',
+                'breakCorrections.breakTime',
+            ])
+            ->where('status', AttendanceCorrection::STATUS_PENDING)
+            ->findOrFail($id);
+        DB::transaction(function () use ($requestItem) {
+            $attendance = $requestItem->attendance;
+            $attendance->update([
+                'clock_in' => $requestItem->requested_clock_in,
+                'clock_out' => $requestItem->requested_clock_out,
+                'note' => $requestItem->note,
+            ]);
+            foreach ($requestItem->breakCorrections as $breakCorrection) {
+                if ($breakCorrection->breakTime) {
+                    $breakCorrection->breakTime->update([
+                        'break_start' => $breakCorrection->requested_break_start,
+                        'break_end' => $breakCorrection->requested_break_end,
+                    ]);
+                }
+            }
+            $requestItem->update([
+                'status' => AttendanceCorrection::STATUS_APPROVED,
+                'approved_by' => Auth::id(),
+                'approved_at' => now(),
+            ]);
+        });
+        return redirect()
+            ->route('attendance.request.show', ['id' => $requestItem->id])
+            ->with('success', '修正申請を承認しました。');
     }
 }
