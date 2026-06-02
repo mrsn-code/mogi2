@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\BreakCorrection;
@@ -14,43 +15,10 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceRequestController extends Controller
 {
-    public function store(Request $request, $id) {
+    public function store(AttendanceCorrectionRequest $request, $id) {
         $attendance = Attendance::with('breaks')
             ->where('user_id', Auth::id())
             ->findOrFail($id);
-        $request->validate([
-            'clock_in' => ['required', 'date_format:H:i'],
-            'clock_out' => ['required', 'date_format:H:i'],
-            'breaks' => ['nullable', 'array'],
-            'breaks.*.break_start' => ['nullable', 'date_format:H:i'],
-            'breaks.*.break_end' => ['nullable', 'date_format:H:i'],
-            'note' => ['required', 'string', 'max:1000'],
-        ], [
-            'clock_in.required' => '出勤時間を入力してください。',
-            'clock_out.required' => '退勤時間を入力してください。',
-            'note.required' => '備考を記入してください。',
-        ]);
-
-        if ($request->clock_out <= $request->clock_in) {
-            return back()
-                ->withErrors(['clock_out' => '退勤時間は出勤時間より後にしてください。'])
-                ->withInput();
-        }
-
-        if ($request->has('breaks')) {
-            foreach ($request->breaks as $breakData) {
-                if (
-                    !empty($breakData['break_start']) &&
-                    !empty($breakData['break_end']) &&
-                    $breakData['break_end'] <= $breakData['break_start']
-                ) {
-
-                    return back()
-                        ->withErrors(['breaks' => '休憩戻り時間は休憩入り時間より後にしてください。'])
-                        ->withInput();
-                }
-            }
-        }
 
         $alreadyPending = AttendanceCorrection::where('attendance_id', $attendance->id)
             ->where('user_id', Auth::id())
@@ -94,11 +62,25 @@ class AttendanceRequestController extends Controller
                     ]);
                 }
             }
+            if (
+                $request->filled('new_break.break_start') ||
+                $request->filled('new_break.break_end')
+            ) {
+                BreakCorrection::create([
+                    'attendance_correction_id' => $correctionRequest->id,
+                    'break_time_id' => null,
+                    'requested_break_start' => $request->filled('new_break.break_start')
+                        ? Carbon::parse($workDate . ' ' . $request->input('new_break.break_start'))
+                        : null,
+                    'requested_break_end' => $request->filled('new_break.break_end')
+                        ? Carbon::parse($workDate . ' ' . $request->input('new_break.break_end'))
+                        : null,
+                ]);
+            }
         });
 
         return redirect()
-            ->route('attendance.request.index', ['status' => AttendanceCorrection::STATUS_PENDING])
-            ->with('success', '修正申請を送信しました。');
+            ->route('attendance.request.index', ['status' => AttendanceCorrection::STATUS_PENDING]);
     }
 
     public function index(Request $request) {
@@ -152,8 +134,14 @@ class AttendanceRequestController extends Controller
                 'note' => $requestItem->note,
             ]);
             foreach ($requestItem->breakCorrections as $breakCorrection) {
-                if ($breakCorrection->breakTime) {
+                if ($breakCorrection->break_time_id && $breakCorrection->breakTime) {
                     $breakCorrection->breakTime->update([
+                        'break_start' => $breakCorrection->requested_break_start,
+                        'break_end' => $breakCorrection->requested_break_end,
+                    ]);
+                } else {
+                    BreakTime::create([
+                        'attendance_id' => $attendance->id,
                         'break_start' => $breakCorrection->requested_break_start,
                         'break_end' => $breakCorrection->requested_break_end,
                     ]);

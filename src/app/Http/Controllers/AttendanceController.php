@@ -32,8 +32,7 @@ class AttendanceController extends Controller
             ->exists();
         if ($exists) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '出勤は1日1回までです。');
+                ->route('attendance.index');
         }
         Attendance::create([
             'user_id' => $user->id,
@@ -42,20 +41,17 @@ class AttendanceController extends Controller
             'status' => Attendance::STATUS_WORKING,
         ]);
         return redirect()
-            ->route('attendance.index')
-            ->with('success', '出勤しました。');
+            ->route('attendance.index');
     }
     public function breakIn() {
         $attendance = $this->getTodayAttendance();
         if (!$attendance) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '出勤していません。');
+                ->route('attendance.index');
         }
         if ($attendance->status !== Attendance::STATUS_WORKING) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '休憩に入ることができません。');
+                ->route('attendance.index');
         }
         DB::transaction(function () use ($attendance) {
             BreakTime::create([
@@ -67,20 +63,17 @@ class AttendanceController extends Controller
             ]);
         });
         return redirect()
-            ->route('attendance.index')
-            ->with('success', '休憩に入りました。');
+            ->route('attendance.index');
     }
     public function breakOut() {
         $attendance = $this->getTodayAttendance();
         if (!$attendance) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '出勤していません。');
+                ->route('attendance.index');
         }
         if ($attendance->status !== Attendance::STATUS_BREAKING) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '休憩中ではありません。');
+                ->route('attendance.index');
         }
         $break = BreakTime::where('attendance_id', $attendance->id)
             ->whereNull('break_end')
@@ -88,8 +81,7 @@ class AttendanceController extends Controller
             ->first();
         if (!$break) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '開始中の休憩がありません。');
+                ->route('attendance.index');
         }
         DB::transaction(function () use ($attendance, $break) {
             $break->update([
@@ -100,33 +92,28 @@ class AttendanceController extends Controller
             ]);
         });
         return redirect()
-            ->route('attendance.index')
-            ->with('success', '休憩から戻りました。');
+            ->route('attendance.index');
     }
     public function clockOut() {
         $attendance = $this->getTodayAttendance();
         if (!$attendance) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '出勤していません。');
+                ->route('attendance.index');
         }
         if ($attendance->status !== Attendance::STATUS_WORKING) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '退勤できる状態ではありません。');
+                ->route('attendance.index');
         }
         if ($attendance->clock_out !== null) {
             return redirect()
-                ->route('attendance.index')
-                ->with('error', '退勤は1日1回までです。');
+                ->route('attendance.index');
         }
         $attendance->update([
             'clock_out' => now(),
             'status' => Attendance::STATUS_FINISHED,
         ]);
         return redirect()
-            ->route('attendance.index')
-            ->with('success', '退勤しました。');
+            ->route('attendance.index');
     }
     private function getTodayAttendance() {
         return Attendance::where('user_id', Auth::id())

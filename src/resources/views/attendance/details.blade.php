@@ -51,9 +51,11 @@
                         : '' }}
                 </td>
             </tr>
-            @foreach ($pendingCorrection->breakCorrections as $index => $breakCorrection)
+            @foreach ($pendingCorrection->breakCorrections as $breakCorrection)
                 <tr>
-                    <th>休憩{{ $index + 1 }}</th>
+                    <th>
+                        休憩{{ $loop->iteration === 1 ? '' : $loop->iteration }}
+                    </th>
                     <td>
                         {{ $breakCorrection->requested_break_start
                             ? \Carbon\Carbon::parse($breakCorrection->requested_break_start)->format('H:i')
@@ -105,7 +107,45 @@
                     >
                 </td>
             </tr>
-            @if ($attendance->breaks->count() > 0)
+            @foreach ($attendance->breaks as $break)
+                <tr>
+                    <th>
+                        休憩{{ $loop->iteration === 1 ? '' : $loop->iteration }}
+                    </th>
+                    <td>
+                        <input
+                            type="time"
+                            name="breaks[{{ $break->id }}][break_start]"
+                            value="{{ old('breaks.' . $break->id . '.break_start', $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}"
+                        >
+                        〜
+                        <input
+                            type="time"
+                            name="breaks[{{ $break->id }}][break_end]"
+                            value="{{ old('breaks.' . $break->id . '.break_end', $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}"
+                        >
+                    </td>
+                </tr>
+            @endforeach
+            <tr>
+                <th>
+                    休憩{{ $attendance->breaks->count() === 0 ? '' : $attendance->breaks->count() + 1 }}
+                </th>
+                <td>
+                    <input
+                        type="time"
+                        name="new_break[break_start]"
+                        value="{{ old('new_break.break_start') }}"
+                    >
+                    〜
+                    <input
+                        type="time"
+                        name="new_break[break_end]"
+                        value="{{ old('new_break.break_end') }}"
+                    >
+                </td>
+            </tr>
+            <!-- @if ($attendance->breaks->count() > 0)
                 @foreach ($attendance->breaks as $index => $break)
                     <tr>
                         <th>休憩時間{{ $index + 1 }}</th>
@@ -129,7 +169,7 @@
                     <th>休憩</th>
                     <td>休憩なし</td>
                 </tr>
-            @endif
+            @endif -->
             <tr>
                 <th>備考</th>
                 <td>

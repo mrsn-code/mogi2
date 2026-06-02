@@ -17,13 +17,13 @@
     </div>
     <div class="time-navigation">
         <a href="{{ route('attendance.list', ['month' => $previousMonth]) }}" class="change-button">
-            前月
+            ← 前月
         </a>
         <h2>
             {{ $currentMonth->format('Y/m') }}
         </h2>
         <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="change-button">
-            次月
+            次月 →
         </a>
     </div>
     <table class="attendance-table">

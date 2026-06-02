@@ -46,10 +46,6 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     return redirect('/attendance');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
-// Route::get('/', function() {
-//     return view('welcome');
-// });
-
 Route::middleware('auth')->group(function () {
     Route::get('/', [AttendanceController::class, 'index']);
     Route::get('/attendance', [AttendanceController::class, 'index'])

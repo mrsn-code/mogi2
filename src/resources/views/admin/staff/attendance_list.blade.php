@@ -20,13 +20,13 @@
             'id' => $user->id,
             'month' => $previousMonth
         ]) }}">
-            前月
+            ← 前月
         </a>
         <a href="{{ route('admin.attendance.staff', [
             'id' => $user->id,
             'month' => $nextMonth
         ]) }}">
-            次月
+            次月 →
         </a>
     </div>
     <table class="attendance-table">

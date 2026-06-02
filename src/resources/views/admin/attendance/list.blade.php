@@ -17,11 +17,11 @@
     </div>
     <div class="time-navigation">
         <a href="{{ route('admin.attendance.list', ['date' => $previousDate]) }}" class="change-button">
-            前日
+            ← 前日
         </a>
         <h2>{{ $currentDate->format('Y/m/d') }}</h2>
         <a href="{{ route('admin.attendance.list', ['date' => $nextDate]) }}" class="change-button">
-            翌日
+            翌日 →
         </a>
     </div>
     <table class="attendance-table">

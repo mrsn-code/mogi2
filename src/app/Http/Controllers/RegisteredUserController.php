@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use App\Actions\Fortify\CreateNewUser;
 
 class RegisteredUserController
 {
     public function store(
-        Request $request,
+        RegisterRequest $request,
         CreateNewUser $creator
     ) {
         event(new Registered($user = $creator->create($request->all())));
